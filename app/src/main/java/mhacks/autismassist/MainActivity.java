@@ -12,7 +12,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
+import android.widget.TextView;
+import android.widget.FrameLayout;
 import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
@@ -220,18 +221,16 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
 
             //Some Expressions
             float smile = face.expressions.getSmile();
-            float brow_furrow = face.expressions.getBrowFurrow();
-            float brow_raise = face.expressions.getBrowRaise();
-
+            float attention = face.expressions.getAttention();
             //Measurements
             float interocular_distance = face.measurements.getInterocularDistance();
             float yaw = face.measurements.orientation.getYaw();
             float roll = face.measurements.orientation.getRoll();
             float pitch = face.measurements.orientation.getPitch();
-
-            Log.d("TAG", Float.toString(joy));
-            Log.d("TAG", Float.toString(smile));
-            Log.d("TAG", Float.toString(anger));
+            TextView view = (TextView) findViewById(R.id.attention_text);
+            TextView secView = (TextView) findViewById(R.id.smile_text);
+            view.setText("Smile is " + Float.toString(smile));
+            secView.setText("Attention is " + Float.toString(attention));
 
             //Face feature points coordinates
             PointF[] points = face.getFacePoints();
