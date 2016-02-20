@@ -3,6 +3,7 @@ package mhacks.autismassist;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -12,11 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
 import com.affectiva.android.affdex.sdk.detector.Detector;
+import com.affectiva.android.affdex.sdk.detector.Face;
 
-public class MainActivity extends Activity implements CameraDetector.CameraEventListener {
+import java.util.List;
+
+public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
     //    private static final int TAKE_PICTURE_REQUEST = 1;
 //    private static final int TAKE_VIDEO_REQUEST = 2;
 //    private GestureDetector mGestureDetector = null;
@@ -25,6 +30,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
     int cameraPreviewWidth = 0;
     int cameraPreviewHeight = 0;
+    private Frame mostRecentFrame;
 
 
     /*
@@ -34,7 +40,6 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         this.setContentView(R.layout.activity_main);
@@ -80,13 +85,18 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
          * the camera. If a SurfaceView is passed in as the last argument to the constructor,
          * that view will be painted with what the camera sees.
          */
-        detector = new CameraDetector(this, CameraDetector.CameraType.CAMERA_BACK, cameraView,1, Detector.FaceDetectorMode.LARGE_FACES);
+        detector = new CameraDetector(this, CameraDetector.CameraType.CAMERA_BACK, cameraView, 1, Detector.FaceDetectorMode.LARGE_FACES);
 
         // update the license path here if you name your file something else
         detector.setLicensePath("license.txt");
-//      detector.setImageListener(this);
-//      detector.setFaceListener(this);
+        detector.setImageListener(this);
+        detector.setFaceListener(this);
         detector.setOnCameraEventListener(this);
+        detector.setDetectAllExpressions(true);
+        detector.setDetectAllEmotions(true);
+        detector.setDetectAllEmojis(true);
+        detector.start();
+        Log.d("TAG", Boolean.toString(detector.isRunning()));
     }
 
     @Override
@@ -141,8 +151,6 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     }
 
 
-
-
     /**
      * Process picture - from example GDK
      *
@@ -166,6 +174,68 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             return false;
         } else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public void onFaceDetectionStarted() {
+        //
+    }
+    @Override
+    public void onFaceDetectionStopped() {
+    }
+    @Override
+    public void onImageResults(List<Face> faces, Frame image,float timestamp) {
+
+        if (faces == null) {
+            Log.d("TAG", "frame not processed");
+            return; //frame was not processed
+        }
+
+        if (faces.size() == 0) {
+            Log.d("TAG", "no face found");
+            return; //no face found
+        }
+
+        //For each face found
+        for (int i = 0 ; i < faces.size() ; i++) {
+            Face face = faces.get(i);
+
+            int faceId = face.getId();
+
+            //Appearance
+            Face.GENDER genderValue = face.appearance.getGender();
+            Face.GLASSES glassesValue = face.appearance.getGlasses();
+
+            //Some Emoji
+            float smiley = face.emojis.getSmiley();
+            float laughing = face.emojis.getLaughing();
+            float wink = face.emojis.getWink();
+
+
+            //Some Emotions
+            float joy = face.emotions.getJoy();
+            float anger = face.emotions.getAnger();
+            float disgust = face.emotions.getDisgust();
+
+            //Some Expressions
+            float smile = face.expressions.getSmile();
+            float brow_furrow = face.expressions.getBrowFurrow();
+            float brow_raise = face.expressions.getBrowRaise();
+
+            //Measurements
+            float interocular_distance = face.measurements.getInterocularDistance();
+            float yaw = face.measurements.orientation.getYaw();
+            float roll = face.measurements.orientation.getRoll();
+            float pitch = face.measurements.orientation.getPitch();
+
+            Log.d("TAG", Float.toString(joy));
+            Log.d("TAG", Float.toString(smile));
+            Log.d("TAG", Float.toString(anger));
+
+            //Face feature points coordinates
+            PointF[] points = face.getFacePoints();
+
         }
     }
 }
