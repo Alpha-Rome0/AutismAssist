@@ -12,7 +12,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
+import android.widget.TextView;
+import android.widget.FrameLayout;
 import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
@@ -21,7 +22,7 @@ import com.affectiva.android.affdex.sdk.detector.Face;
 
 import java.util.List;
 
-public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener, Detector.ImageListener {
+public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
     private SurfaceView cameraView; //SurfaceView used to display camera images
     CameraDetector detector;
     private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
@@ -47,8 +48,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         decorView.setSystemUiVisibility(uiOptions);
         // Remember that you should never show the action bar if the
         // status bar is hidden, so hide that too if necessary.
-        ActionBar actionBar = getActionBar();
-        actionBar.hide();
+//        ActionBar actionBar = getActionBar();
+//        actionBar.hide();
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         cameraView = (SurfaceView) findViewById(R.id.camera_preview);
         PackageManager manager = getPackageManager();
@@ -178,13 +179,11 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     public void onFaceDetectionStarted() {
         //
     }
-
     @Override
     public void onFaceDetectionStopped() {
     }
-
     @Override
-    public void onImageResults(List<Face> faces, Frame image, float timestamp) {
+    public void onImageResults(List<Face> faces, Frame image,float timestamp) {
 
         if (faces == null) {
             Log.d("TAG", "frame not processed");
@@ -197,7 +196,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         }
 
         //For each face found
-        for (int i = 0; i < faces.size(); i++) {
+        for (int i = 0 ; i < faces.size() ; i++) {
             Face face = faces.get(i);
 
             int faceId = face.getId();
@@ -219,19 +218,16 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
 
             //Some Expressions
             float smile = face.expressions.getSmile();
-            float brow_furrow = face.expressions.getBrowFurrow();
-            float brow_raise = face.expressions.getBrowRaise();
             float attention = face.expressions.getAttention();
-
             //Measurements
             float interocular_distance = face.measurements.getInterocularDistance();
             float yaw = face.measurements.orientation.getYaw();
             float roll = face.measurements.orientation.getRoll();
             float pitch = face.measurements.orientation.getPitch();
-
-            Log.d("TAG", Float.toString(joy));
-            Log.d("TAG", Float.toString(smile));
-            Log.d("TAG", Float.toString(anger));
+            TextView view = (TextView) findViewById(R.id.attention_text);
+            TextView secView = (TextView) findViewById(R.id.smile_text);
+            view.setText("Smile is " + Float.toString(smile));
+            secView.setText("Attention is " + Float.toString(attention));
 
             //Face feature points coordinates
             PointF[] points = face.getFacePoints();
