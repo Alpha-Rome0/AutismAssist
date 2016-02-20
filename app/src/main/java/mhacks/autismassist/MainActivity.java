@@ -21,10 +21,7 @@ import com.affectiva.android.affdex.sdk.detector.Face;
 
 import java.util.List;
 
-public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
-    //    private static final int TAKE_PICTURE_REQUEST = 1;
-//    private static final int TAKE_VIDEO_REQUEST = 2;
-//    private GestureDetector mGestureDetector = null;
+public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener, Detector.ImageListener {
     private SurfaceView cameraView; //SurfaceView used to display camera images
     CameraDetector detector;
     private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
@@ -181,11 +178,13 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     public void onFaceDetectionStarted() {
         //
     }
+
     @Override
     public void onFaceDetectionStopped() {
     }
+
     @Override
-    public void onImageResults(List<Face> faces, Frame image,float timestamp) {
+    public void onImageResults(List<Face> faces, Frame image, float timestamp) {
 
         if (faces == null) {
             Log.d("TAG", "frame not processed");
@@ -198,7 +197,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         }
 
         //For each face found
-        for (int i = 0 ; i < faces.size() ; i++) {
+        for (int i = 0; i < faces.size(); i++) {
             Face face = faces.get(i);
 
             int faceId = face.getId();
@@ -222,6 +221,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             float smile = face.expressions.getSmile();
             float brow_furrow = face.expressions.getBrowFurrow();
             float brow_raise = face.expressions.getBrowRaise();
+            float attention = face.expressions.getAttention();
 
             //Measurements
             float interocular_distance = face.measurements.getInterocularDistance();
