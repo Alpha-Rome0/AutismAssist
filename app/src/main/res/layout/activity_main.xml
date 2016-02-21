@@ -44,7 +44,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center_vertical|end"
-            android:text="@string/smile"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_alignParentStart="true"
             android:layout_gravity="right" />

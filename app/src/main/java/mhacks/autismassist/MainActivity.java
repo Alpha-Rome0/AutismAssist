@@ -1,9 +1,7 @@
 package mhacks.autismassist;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -13,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.FrameLayout;
+
 import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
@@ -29,6 +27,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     int cameraPreviewWidth = 0;
     int cameraPreviewHeight = 0;
     private Frame mostRecentFrame;
+    private TextView view;
+    private TextView secView;
 
 
     /*
@@ -50,6 +50,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         // status bar is hidden, so hide that too if necessary.
 //        ActionBar actionBar = getActionBar();
 //        actionBar.hide();
+        view = (TextView) findViewById(R.id.attention_text);
+        secView = (TextView) findViewById(R.id.smile_text);
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         cameraView = (SurfaceView) findViewById(R.id.camera_preview);
         PackageManager manager = getPackageManager();
@@ -90,9 +92,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         detector.setImageListener(this);
         detector.setFaceListener(this);
         detector.setOnCameraEventListener(this);
-        detector.setDetectAllExpressions(true);
-        detector.setDetectAllEmotions(true);
-        detector.setDetectAllEmojis(true);
+        detector.setDetectAttention(true);
+        detector.setDetectSmile(true);
         detector.start();
         Log.d("TAG", Boolean.toString(detector.isRunning()));
     }
@@ -186,12 +187,12 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     public void onImageResults(List<Face> faces, Frame image,float timestamp) {
 
         if (faces == null) {
-            Log.d("TAG", "frame not processed");
+            //Log.d("TAG", "frame not processed");
             return; //frame was not processed
         }
 
         if (faces.size() == 0) {
-            Log.d("TAG", "no face found");
+            //Log.d("TAG", "no face found");
             return; //no face found
         }
 
@@ -206,31 +207,29 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             Face.GLASSES glassesValue = face.appearance.getGlasses();
 
             //Some Emoji
-            float smiley = face.emojis.getSmiley();
-            float laughing = face.emojis.getLaughing();
-            float wink = face.emojis.getWink();
+//            float smiley = face.emojis.getSmiley();
+//            float laughing = face.emojis.getLaughing();
+//            float wink = face.emojis.getWink();
 
 
             //Some Emotions
-            float joy = face.emotions.getJoy();
-            float anger = face.emotions.getAnger();
-            float disgust = face.emotions.getDisgust();
+//            float joy = face.emotions.getJoy();
+//            float anger = face.emotions.getAnger();
+//            float disgust = face.emotions.getDisgust();
 
             //Some Expressions
-            float smile = face.expressions.getSmile();
+            float engagement = face.emotions.getEngagement();
             float attention = face.expressions.getAttention();
+            int s=Math.round(engagement);
+            int a=Math.round(attention);
             //Measurements
-            float interocular_distance = face.measurements.getInterocularDistance();
-            float yaw = face.measurements.orientation.getYaw();
-            float roll = face.measurements.orientation.getRoll();
-            float pitch = face.measurements.orientation.getPitch();
-            TextView view = (TextView) findViewById(R.id.attention_text);
-            TextView secView = (TextView) findViewById(R.id.smile_text);
-            view.setText(Float.toString(smile));
-            secView.setText(Float.toString(attention));
+
+            view.setText(Integer.toString(s));
+            secView.setText(Integer.toString(a));
+
 
             //Face feature points coordinates
-            PointF[] points = face.getFacePoints();
+            //PointF[] points = face.getFacePoints();
 
         }
     }
