@@ -18,24 +18,36 @@
         android:layout_centerInParent="true">
 
     </SurfaceView>
-    <TextView
-        android:id="@+id/attention_text"
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="Attention: "
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        />
-    <TextView
-        android:id="@+id/smile_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:text="Smile: "
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_below="@+id/attention_text"
-        android:layout_alignParentStart="true" />
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/attention_text"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="right" />
+
+        <TextView
+            android:id="@+id/smile_text"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|end"
+            android:text="@string/smile"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="right" />
+    </LinearLayout>
+
 </RelativeLayout>

@@ -226,8 +226,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             float pitch = face.measurements.orientation.getPitch();
             TextView view = (TextView) findViewById(R.id.attention_text);
             TextView secView = (TextView) findViewById(R.id.smile_text);
-            view.setText("Smile is " + Float.toString(smile));
-            secView.setText("Attention is " + Float.toString(attention));
+            view.setText(Float.toString(smile));
+            secView.setText(Float.toString(attention));
 
             //Face feature points coordinates
             PointF[] points = face.getFacePoints();
