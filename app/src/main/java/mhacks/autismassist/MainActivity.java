@@ -12,27 +12,28 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import com.firebase.client.Firebase;
 import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
 import com.affectiva.android.affdex.sdk.detector.Detector;
 import com.affectiva.android.affdex.sdk.detector.Face;
 
+
 import java.util.List;
 
-public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
-    private SurfaceView cameraView; //SurfaceView used to display camera images
-    CameraDetector detector;
-    private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
-    int cameraPreviewWidth = 0;
-    int cameraPreviewHeight = 0;
-    private Frame mostRecentFrame;
-    private ImageView view;
-    private ImageView secView;
-    private TextView firstTextView;
-    private TextView secondTextView;
-
+    public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
+        private SurfaceView cameraView; //SurfaceView used to display camera images
+        CameraDetector detector;
+        private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
+        int cameraPreviewWidth = 0;
+        int cameraPreviewHeight = 0;
+        private Frame mostRecentFrame;
+        private ImageView view;
+        private ImageView secView;
+        private FirebaseHelper helper;
+        private TextView firstTextView;
+        private TextView secondTextView;
 
     /*
      * (non-Javadoc)
@@ -41,8 +42,10 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
+        String url = "https://autismassist.firebaseIO.com";
 
-
+        helper = new FirebaseHelper(url);
         this.setContentView(R.layout.activity_main);
 
         View decorView = getWindow().getDecorView();
@@ -190,6 +193,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     }
     @Override
     public void onImageResults(List<Face> faces, Frame image,float timestamp) {
+        int s;
+        int a;
 
         if (faces == null) {
             //Log.d("TAG", "frame not processed");
@@ -198,32 +203,55 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
 
         if (faces.size() == 0) {
             //Log.d("TAG", "no face found");
+            firstTextView.setText("0");
+            secondTextView.setText("0");
             return; //no face found
         }
 
         //For each face found
+
         for (int i = 0 ; i < faces.size() ; i++) {
             Face face = faces.get(i);
-
+            int[] measurements = new int[14];
             int faceId = face.getId();
 
             //Appearance
             Face.GENDER genderValue = face.appearance.getGender();
             Face.GLASSES glassesValue = face.appearance.getGlasses();
+            switch(genderValue) {
+                case MALE:
+                    measurements[0] = 0;
+                    break;
+                case FEMALE:
+                    measurements[0] = 1;
+                    break;
+                case UNKNOWN:
+                    measurements[0] = 2;
+                    break;
+            }
+            switch(glassesValue) {
+                case NO:
+                    measurements[1] = 0;
+                    break;
+                case YES:
+                     measurements[1] = 1;
+                     break;
+            }
 
 
             //Some Expressions
             float engagement = face.emotions.getEngagement();
             float attention = face.expressions.getAttention();
 
-            int s=Math.round(engagement);
-            int a=Math.round(attention);
+            s=Math.round(engagement);
+            a=Math.round(attention);
             //Log.d("TAG",Integer.toString(s));
             //Measurements
 
             firstTextView.setText(Integer.toString(s));
             secondTextView.setText(Integer.toString(a));
 
+            helper.saveArray(measurements);
 
             //Face feature points coordinates
             //PointF[] points = face.getFacePoints();
