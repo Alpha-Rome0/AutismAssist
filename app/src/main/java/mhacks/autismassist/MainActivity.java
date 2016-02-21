@@ -2,12 +2,10 @@ package mhacks.autismassist;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +18,6 @@ import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
 import com.affectiva.android.affdex.sdk.detector.Detector;
 import com.affectiva.android.affdex.sdk.detector.Face;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -94,7 +90,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
          * the camera. If a SurfaceView is passed in as the last argument to the constructor,
          * that view will be painted with what the camera sees.
          */
-        detector = new CameraDetector(this, CameraDetector.CameraType.CAMERA_BACK, cameraView, 1, Detector.FaceDetectorMode.LARGE_FACES);
+        detector = new CameraDetector(this, CameraDetector.CameraType.CAMERA_BACK, cameraView, 1, Detector.FaceDetectorMode.SMALL_FACES);
 
         // update the license path here if you name your file something else
         detector.setLicensePath("license.txt");
@@ -102,7 +98,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         detector.setFaceListener(this);
         detector.setOnCameraEventListener(this);
         detector.setDetectAttention(true);
-        detector.setDetectSmile(true);
+        detector.setDetectEngagement(true);
         detector.start();
         Log.d("TAG", Boolean.toString(detector.isRunning()));
     }
@@ -215,22 +211,14 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             Face.GENDER genderValue = face.appearance.getGender();
             Face.GLASSES glassesValue = face.appearance.getGlasses();
 
-            //Some Emoji
-//            float smiley = face.emojis.getSmiley();
-//            float laughing = face.emojis.getLaughing();
-//            float wink = face.emojis.getWink();
-
-
-            //Some Emotions
-//            float joy = face.emotions.getJoy();
-//            float anger = face.emotions.getAnger();
-//            float disgust = face.emotions.getDisgust();
 
             //Some Expressions
             float engagement = face.emotions.getEngagement();
             float attention = face.expressions.getAttention();
+
             int s=Math.round(engagement);
             int a=Math.round(attention);
+            //Log.d("TAG",Integer.toString(s));
             //Measurements
 
             firstTextView.setText(Integer.toString(s));
