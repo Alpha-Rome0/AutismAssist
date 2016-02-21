@@ -12,25 +12,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import com.firebase.client.Firebase;
 import com.affectiva.android.affdex.sdk.Frame;
 import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
 import com.affectiva.android.affdex.sdk.detector.Detector;
 import com.affectiva.android.affdex.sdk.detector.Face;
 
+import com.affectiva.android.affdex.sdk.detector.Face.GENDER;
+import com.affectiva.android.affdex.sdk.detector.Face.GLASSES;
+
 import java.util.List;
 
-public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
-    private SurfaceView cameraView; //SurfaceView used to display camera images
-    CameraDetector detector;
-    private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
-    int cameraPreviewWidth = 0;
-    int cameraPreviewHeight = 0;
-    private Frame mostRecentFrame;
+    public class MainActivity extends Activity implements CameraDetector.CameraEventListener, Detector.FaceListener,Detector.ImageListener {
+        private SurfaceView cameraView; //SurfaceView used to display camera images
+        CameraDetector detector;
+        private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
+        int cameraPreviewWidth = 0;
+        int cameraPreviewHeight = 0;
+        private Frame mostRecentFrame;
     private TextView view;
     private TextView secView;
-
+    private FirebaseHelper helper;
 
     /*
      * (non-Javadoc)
@@ -39,8 +42,10 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
+        String url = "https://autismassist.firebaseIO.com";
 
-
+        helper = new FirebaseHelper(url);
         this.setContentView(R.layout.activity_main);
 
         View decorView = getWindow().getDecorView();
@@ -200,12 +205,31 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         //For each face found
         for (int i = 0 ; i < faces.size() ; i++) {
             Face face = faces.get(i);
-
+            int[] measurements = new int[13];
             int faceId = face.getId();
 
             //Appearance
             Face.GENDER genderValue = face.appearance.getGender();
             Face.GLASSES glassesValue = face.appearance.getGlasses();
+            switch(genderValue) {
+                case MALE:
+                    measurements[0] = 0;
+                    break;
+                case FEMALE:
+                    measurements[0] = 1;
+                    break;
+                case UNKNOWN:
+                    measurements[0] = 2;
+                    break;
+            }
+            switch(glassesValue) {
+                case NO:
+                    measurements[1] = 0;
+                    break;
+                case YES:
+                     measurements[1] = 1;
+                     break;
+            }
 
             //Some Emoji
 //            float smiley = face.emojis.getSmiley();
@@ -213,24 +237,39 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
 //            float wink = face.emojis.getWink();
 
 
-            //Some Emotions
-//            float joy = face.emotions.getJoy();
-//            float anger = face.emotions.getAnger();
-//            float disgust = face.emotions.getDisgust();
+            int anger = Math.round(face.emotions.getAnger());
+            int contempt = Math.round(face.emotions.getContempt());
+            int disgust = Math.round(face.emotions.getDisgust());
 
             //Some Expressions
-            float smile = face.expressions.getSmile();
+            float engagement = face.emotions.getEngagement();
             float attention = face.expressions.getAttention();
-            int s=Math.round(smile);
+            int fear = Math.round(face.emotions.getFear());
+            int joy = Math.round(face.emotions.getJoy());
+            int sad = Math.round(face.emotions.getSadness());
+            int surprise = Math.round(face.emotions.getSurprise());
+            int valence = Math.round(face.emotions.getValence());
+            int s=Math.round(engagement);
             int a=Math.round(attention);
+            measurements[2] = anger;
+            measurements[3] = contempt;
+            measurements[4] = disgust;
+            measurements[5] = s;
+            measurements[6] = a;
+            measurements[7] = fear;
+            measurements[8] = joy;
+            measurements[9] = sad;
+            measurements[10] = surprise;
+            measurements[11] = valence;
+            measurements[12] = Math.round(face.expressions.getSmile());
             //Measurements
 //            float interocular_distance = face.measurements.getInterocularDistance();
 //            float yaw = face.measurements.orientation.getYaw();
 //            float roll = face.measurements.orientation.getRoll();
 //            float pitch = face.measurements.orientation.getPitch();
-            view.setText("Smile is " + Integer.toString(s));
+            view.setText("Engagement is " + Integer.toString(s));
             secView.setText("Attention is " + Integer.toString(a));
-
+            helper.saveArray(measurements);
             //Face feature points coordinates
             PointF[] points = face.getFacePoints();
 

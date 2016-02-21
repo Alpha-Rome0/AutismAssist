@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:text="Smile: "
+        android:text="Engagement: "
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_below="@+id/attention_text"
         android:layout_alignParentStart="true" />
