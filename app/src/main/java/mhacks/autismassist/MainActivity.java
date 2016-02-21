@@ -2,7 +2,6 @@ package mhacks.autismassist;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -188,12 +187,12 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     public void onImageResults(List<Face> faces, Frame image,float timestamp) {
 
         if (faces == null) {
-            Log.d("TAG", "frame not processed");
+            //Log.d("TAG", "frame not processed");
             return; //frame was not processed
         }
 
         if (faces.size() == 0) {
-            Log.d("TAG", "no face found");
+            //Log.d("TAG", "no face found");
             return; //no face found
         }
 
@@ -232,7 +231,7 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             secView.setText("Attention is " + Integer.toString(a));
 
             //Face feature points coordinates
-            PointF[] points = face.getFacePoints();
+            //PointF[] points = face.getFacePoints();
 
         }
     }
