@@ -75,8 +75,6 @@ import java.util.List;
     @Override
     protected void onResume() {
         super.onResume();
-
-
     }
 
     /*
@@ -84,8 +82,10 @@ import java.util.List;
      * @see android.app.Activity#onPause()
      */
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
+        detector.stop();
     }
 
     void initializeCameraDetector() {
@@ -174,14 +174,8 @@ import java.util.List;
 	 */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_CAMERA) {
-            // Stop the preview and release the camera.
-            // Execute your logic as quickly as possible
-            // so the capture happens quickly.
-            return false;
-        } else {
-            return super.onKeyDown(keyCode, event);
-        }
+        this.finishAffinity();
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
