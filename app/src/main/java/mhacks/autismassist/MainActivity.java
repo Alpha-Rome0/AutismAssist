@@ -29,10 +29,11 @@ import java.util.List;
         private RelativeLayout mainLayout; //layout, to be resized, containing all UI elements
         int cameraPreviewWidth = 0;
         int cameraPreviewHeight = 0;
+        private static int laserCount = 0;
         private Frame mostRecentFrame;
-    private TextView view;
-    private TextView secView;
-    private FirebaseHelper helper;
+        private TextView view;
+        private TextView secView;
+        private FirebaseHelper helper;
 
     /*
      * (non-Javadoc)
@@ -100,9 +101,9 @@ import java.util.List;
         detector.setDetectAttention(true);
         detector.setDetectSmile(true);
         detector.setDetectContempt(true);
-        detector.setDetectAllEmotions(true);
         detector.setDetectValence(true);
         detector.setDetectGender(true);
+        detector.setDetectEngagement(true);
         detector.start();
         Log.d("TAG", Boolean.toString(detector.isRunning()));
     }
@@ -208,7 +209,7 @@ import java.util.List;
         //For each face found
         for (int i = 0 ; i < faces.size() ; i++) {
             Face face = faces.get(i);
-            int[] measurements = new int[13];
+            int[] measurements = new int[14];
             int faceId = face.getId();
 
             //Appearance
@@ -265,6 +266,8 @@ import java.util.List;
             measurements[10] = surprise;
             measurements[11] = valence;
             measurements[12] = Math.round(face.expressions.getSmile());
+            measurements[13] = laserCount;
+            laserCount += 1;
             //Measurements
 //            float interocular_distance = face.measurements.getInterocularDistance();
 //            float yaw = face.measurements.orientation.getYaw();
