@@ -34,7 +34,20 @@ public class Start extends Activity {
             if (gesture == Gesture.TAP) {
                 startGame();
                 return true;
-            } else {
+            }
+            if (gesture == Gesture.SWIPE_LEFT) {
+                startGame();
+                return true;
+            }
+            if (gesture == Gesture.SWIPE_RIGHT) {
+                startGame();
+                return true;
+            }
+            if (gesture == Gesture.LONG_PRESS) {
+                startGame();
+                return true;
+            }
+            else {
                 return false;
             }
         }

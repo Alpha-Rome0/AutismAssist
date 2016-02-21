@@ -2,13 +2,16 @@ package mhacks.autismassist;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,6 +20,8 @@ import com.affectiva.android.affdex.sdk.Frame.ROTATE;
 import com.affectiva.android.affdex.sdk.detector.CameraDetector;
 import com.affectiva.android.affdex.sdk.detector.Detector;
 import com.affectiva.android.affdex.sdk.detector.Face;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -27,8 +32,10 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
     int cameraPreviewWidth = 0;
     int cameraPreviewHeight = 0;
     private Frame mostRecentFrame;
-    private TextView view;
-    private TextView secView;
+    private ImageView view;
+    private ImageView secView;
+    private TextView firstTextView;
+    private TextView secondTextView;
 
 
     /*
@@ -50,10 +57,12 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
         // status bar is hidden, so hide that too if necessary.
 //        ActionBar actionBar = getActionBar();
 //        actionBar.hide();
-        view = (TextView) findViewById(R.id.attention_text);
-        secView = (TextView) findViewById(R.id.smile_text);
+        view = (ImageView) findViewById(R.id.imageView);
+        secView = (ImageView) findViewById(R.id.imageView2);
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         cameraView = (SurfaceView) findViewById(R.id.camera_preview);
+        firstTextView = (TextView) findViewById(R.id.textView);
+        secondTextView = (TextView) findViewById(R.id.textView2);
         PackageManager manager = getPackageManager();
         Log.d("Tag", Boolean.toString(manager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) + "front");
         Log.d("Tag", Boolean.toString(manager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) + "back");
@@ -224,8 +233,8 @@ public class MainActivity extends Activity implements CameraDetector.CameraEvent
             int a=Math.round(attention);
             //Measurements
 
-            view.setText(Integer.toString(s));
-            secView.setText(Integer.toString(a));
+            firstTextView.setText(Integer.toString(s));
+            secondTextView.setText(Integer.toString(a));
 
 
             //Face feature points coordinates
