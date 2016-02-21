@@ -193,7 +193,8 @@ import java.util.List;
     }
     @Override
     public void onImageResults(List<Face> faces, Frame image,float timestamp) {
-        int s;
+        int[] measurements = new int[2];
+        int e;
         int a;
 
         if (faces == null) {
@@ -205,6 +206,9 @@ import java.util.List;
             //Log.d("TAG", "no face found");
             firstTextView.setText("0");
             secondTextView.setText("0");
+            measurements[0]=0;
+            measurements[1]=0;
+            helper.saveArray(measurements);
             return; //no face found
         }
 
@@ -212,44 +216,26 @@ import java.util.List;
 
         for (int i = 0 ; i < faces.size() ; i++) {
             Face face = faces.get(i);
-            int[] measurements = new int[14];
-            int faceId = face.getId();
+            //int faceId = face.getId();
 
             //Appearance
-            Face.GENDER genderValue = face.appearance.getGender();
-            Face.GLASSES glassesValue = face.appearance.getGlasses();
-            switch(genderValue) {
-                case MALE:
-                    measurements[0] = 0;
-                    break;
-                case FEMALE:
-                    measurements[0] = 1;
-                    break;
-                case UNKNOWN:
-                    measurements[0] = 2;
-                    break;
-            }
-            switch(glassesValue) {
-                case NO:
-                    measurements[1] = 0;
-                    break;
-                case YES:
-                     measurements[1] = 1;
-                     break;
-            }
+            //Face.GENDER genderValue = face.appearance.getGender();
+            //Face.GLASSES glassesValue = face.appearance.getGlasses();
 
 
             //Some Expressions
             float engagement = face.emotions.getEngagement();
             float attention = face.expressions.getAttention();
 
-            s=Math.round(engagement);
+            e=Math.round(engagement);
             a=Math.round(attention);
             //Log.d("TAG",Integer.toString(s));
             //Measurements
 
-            firstTextView.setText(Integer.toString(s));
+            firstTextView.setText(Integer.toString(e));
             secondTextView.setText(Integer.toString(a));
+            measurements[0]=e;
+            measurements[1]=a;
 
             helper.saveArray(measurements);
 
