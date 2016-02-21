@@ -2,7 +2,6 @@ package mhacks.autismassist;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -100,6 +99,10 @@ import java.util.List;
         detector.setOnCameraEventListener(this);
         detector.setDetectAttention(true);
         detector.setDetectSmile(true);
+        detector.setDetectContempt(true);
+        detector.setDetectAllEmotions(true);
+        detector.setDetectValence(true);
+        detector.setDetectGender(true);
         detector.start();
         Log.d("TAG", Boolean.toString(detector.isRunning()));
     }
@@ -193,12 +196,12 @@ import java.util.List;
     public void onImageResults(List<Face> faces, Frame image,float timestamp) {
 
         if (faces == null) {
-            Log.d("TAG", "frame not processed");
+            //Log.d("TAG", "frame not processed");
             return; //frame was not processed
         }
 
         if (faces.size() == 0) {
-            Log.d("TAG", "no face found");
+            //Log.d("TAG", "no face found");
             return; //no face found
         }
 
@@ -270,8 +273,12 @@ import java.util.List;
             view.setText("Engagement is " + Integer.toString(s));
             secView.setText("Attention is " + Integer.toString(a));
             helper.saveArray(measurements);
+            view.setText(Integer.toString(s));
+            secView.setText(Integer.toString(a));
+
+
             //Face feature points coordinates
-            PointF[] points = face.getFacePoints();
+            //PointF[] points = face.getFacePoints();
 
         }
     }
